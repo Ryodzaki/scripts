@@ -14,10 +14,11 @@ foreach($smallpuk in $puk)
     {
         if ($out.Contains("OgUwQPNl"))
         {
-            Write-Host "Glam" -ForegroundColor Pink
+            Write-Host "Glam" -ForegroundColor Magenta
         }
     }
 }
+
 
 
 Remove-Item -Path "xxstrings64.exe" -Force
