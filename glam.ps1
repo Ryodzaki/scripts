@@ -1,0 +1,46 @@
+try {
+    
+    $javawProcesses = Get-Process -Name javaw -ErrorAction SilentlyContinue
+    
+    if (-not $javawProcesses) {
+        Write-Host "Процесс javaw не найден"
+        exit 1
+    }
+
+
+    $puk = $javawProcesses.Id
+
+ 
+    $url = "https://github.com/example/xxstrings64/releases/latest/download/xxstrings64.exe"
+    $output = "xxstrings64.exe"
+    
+    Invoke-WebRequest -Uri $url -OutFile $output -UseBasicParsing
+
+    
+    if (-not (Test-Path $output)) {
+        Write-Host "Ошибка: файл xxstrings64.exe не был скачан"
+        exit 1
+    }
+
+
+    foreach($smallpuk in $puk) {
+        Write-Host "Analyzing PID: $smallpuk"
+
+        $outputText = (.\xxstrings64.exe -p $smallpuk | Out-String) -split "`n"
+        
+        foreach($out in $outputText) {
+            if ($out.Contains("OgUwQPNl")) {
+                Write-Host "Gotcha" -ForegroundColor Red
+            }
+        }
+    }
+}
+catch {
+    Write-Host "Произошла ошибка: $($_.Exception.Message)"
+}
+finally {
+    
+    if (Test-Path "xxstrings64.exe") {
+        Remove-Item -Path "xxstrings64.exe" -Force -ErrorAction SilentlyContinue
+    }
+}
